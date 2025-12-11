@@ -1,0 +1,55 @@
+.panel-heading.collapsed .fa-chevron-down,
+.panel-heading .fa-chevron-right {
+  display: none;
+}
+
+.panel-heading.collapsed .fa-chevron-right,
+.panel-heading .fa-chevron-down {
+  display: inline-block;
+}
+
+i.fa {
+  margin-right: 5px;
+}
+
+.panel-headingz {
+  cursor: pointer;
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  border-bottom: 2px solid #bce8f1;
+  line-height: 2;
+}
+
+.collapsed ~ .panel-body {
+  padding: 0;
+}
+
+#map-itineraire {
+  padding-bottom: 10px;
+}
+
+div[id^="GPlayersList"] {
+  width: 250px;
+}
+
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(192, 192, 192, 0.5);
+  background-image: url("http://i.stack.imgur.com/MnyxU.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.not_displayed {
+  display: none;
+}
+
+.displayed {
+  display: block;
+}
