@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Outil de test itinéraires GPF</title>
+    </head>
+    <body>
+      <!-- CSS -->
+      <link
+        rel="stylesheet"
+        href="https://openlayers.org/en/v4.6.5/css/ol.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://ignf.github.io/geoportal-extensions/openlayers-latest/dist/GpPluginOpenLayers.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/ol-contextmenu@latest/dist/ol-contextmenu.min.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
+      />
+      <link rel="stylesheet" href="style.css" />
+
+      <!-- JS -->
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.12/js/bootstrap-select.min.js"></script>
+      <script src="https://openlayers.org/en/v4.6.5/build/ol-debug.js"></script>
+      <script src="https://ignf.github.io/geoportal-extensions/openlayers-latest/dist/GpPluginOpenLayers.js"></script>
+      <script src="https://ignf.github.io/geoportal-access-lib/latest/dist/GpServices.js"></script>
+      <script src="https://unpkg.com/ol-contextmenu@4.1.0/dist/ol-contextmenu.js"></script>
+
+      <div class="container-fluid row">
+        <form id="route-form">
+          <p><strong>Paramètres de l'itinéraire</strong></p>
+
+          <p>
+            Ressource :
+
+            <select class="btn dropdown-toggle btn-light" id="userResource">
+              <option
+                title="Calcul opéré par le moteur OSRM"
+                value="bdtopo-osrm"
+              >
+                Ressource OSRM
+              </option>
+              <option
+                title="Calcul opéré par le moteur OSRM"
+                value="bdtopo-osrm__VALID"
+              >
+                Ressource OSRM validation
+              </option>
+
+              <option
+                title="Calcul opéré par le moteur PGRouting"
+                value="bdtopo-pgr"
+              >
+                Ressource PGR
+              </option>
+              <option
+                title="Calcul opéré par le moteur PGRouting validation"
+                value="bdtopo-pgr__VALID"
+              >
+                Ressource PGR validation
+              </option>
+              <option
+                title="Calcul opéré par le moteur Valhalla"
+                value="bdtopo-valhalla"
+              >
+                Ressource Valhalla
+              </option>
+              <option
+                title="Calcul opéré par le moteur Valhalla validation"
+                value="bdtopo-valhalla__VALID"
+              >
+                Ressource Valhalla validation
+              </option>
+            </select>
+          </p>
+
+          <p>
+            Mode de déplacement :
+
+            <select class="selectpicker" id="userProfile">
+              <option value="car">Voiture</option>
+              <option value="pedestrian">Piéton</option>
+            </select>
+          </p>
+
+          <p>
+            Option de calcul :
+
+            <select class="selectpicker" id="userOptimization">
+              <option value="fastest">Plus rapide</option>
+              <option value="shortest">Plus court</option>
+            </select>
+          </p>
+
+          <p>
+            Contraintes : exclure les routes comprenant des :
+            <input
+              class="constrChkBx"
+              type="checkbox"
+              id="banned-highway"
+              name="Autoroutes"
+            />
+            <label for="Autoroutes">Péages</label>
+            <input
+              class="constrChkBx"
+              type="checkbox"
+              id="banned-tunnel"
+              name="Tunnels"
+            />
+            <label for="Tunnels">Tunnels</label>
+            <input
+              class="constrChkBx"
+              type="checkbox"
+              id="banned-bridge"
+              name="Ponts"
+            />
+            <label for="Ponts">Ponts</label>
+          </p>
+          <p>Pour PGR :</p>
+          <p>
+            <input
+              class="constrChkBx"
+              type="checkbox"
+              id="pref-imp"
+              name="pref-imp"
+              disabled
+            />
+            <select class="selectpicker" id="pref-ou-avoid-imp">
+              <option value="prefer">Privilégier</option>
+              <option value="avoid">Éviter</option>
+            </select>
+            les routes d'importance
+            <select class="selectpicker" id="operator-imp">
+              <option value=">=">supérieure ou égale</option>
+              <option value="<=">inférieure ou égale</option>
+              <option value="=">égale</option>
+            </select>
+            à 
+            <select class="selectpicker" id="importance">
+              <option value="1">1 (européen)</option>
+              <option value="2">2 (national)</option>
+              <option value="3">3 (départemental)</option>
+              <option value="4">4 (communal rapide)</option>
+              <option value="5">5 (communal)</option>
+            </select>
+          </p>
+          <p>
+            <input
+              class="constrChkBx"
+              type="checkbox"
+              id="pref-classt"
+              name="pref-classt"
+              disabled
+            />
+            <select class="selectpicker" id="pref-ou-avoid-classt">
+              <option value="prefer">Privilégier</option>
+              <option value="avoid">àviter</option>
+            </select>
+            les routes de type
+            <select class="selectpicker" id="classement">
+              <!--<option value="Route européenne">Route européenne</option>-->
+              <option value="autoroute">Autoroute</option>
+              <option value="nationale">Nationale</option>
+              <option value="departementale">Départementale</option>
+              <option value="route_intercommunale">Route intercommunale</option>
+              <!--<option value="Route nommée">Route nommée</option>-->
+              <option value="route_intercommunale">Route intercommunale</option>
+              <!--<option value="Voie communale">Voie communale</option>-->
+              <option value="chemin_rural">Chemin rural</option>
+              <!--<option value="Voie verte">Voie verte</option>-->
+              <!--<option value="itinéraire cyclable">itinéraire cyclable</option>-->
+            </select>
+          </p>
+          <p>
+            <input
+              class="constrChkBx"
+              type="checkbox"
+              id="pref-iti-vert"
+              name="pref-iti-vert"
+              disabled
+            />
+            Privilégier les itinéraires verts
+          </p>
+        </form>
+      </div>
+
+      <div class="container-fluid row" id="map-container">
+        <div id="map-itineraire" class="col-9"></div>
+        <div id="summary" class="col-3"></div>
+      </div>
+
+      <div class="panel panel-info">
+        <div
+          class="panel-heading collapsed"
+          data-toggle="collapse"
+          data-target="#request"
+        >
+          <i class="fa fa-fw fa-chevron-down"></i>
+          <i class="fa fa-fw fa-chevron-right"></i>Requête envoyée au nouveau
+          service d'itinéraire
+        </div>
+        <div class="panel-body">
+          <!-- The inside div eliminates the 'jumping' animation. -->
+          <div class="collapse" id="request"></div>
+        </div>
+      </div>
+      <div class="panel panel-info">
+        <div
+          class="panel-heading collapsed"
+          data-toggle="collapse"
+          data-target="#response"
+        >
+          <i class="fa fa-fw fa-chevron-down"></i>
+          <i class="fa fa-fw fa-chevron-right"></i>Réponse du nouveau service
+          d'itinéraire
+        </div>
+        <div class="panel-body">
+          <!-- The inside div eliminates the 'jumping' animation. -->
+          <div class="collapse" id="response"></div>
+        </div>
+      </div>
+
+      <div id="loading"></div>
+      <script src="script.js"></script>
+    </body>
+  </html>
+</html>
